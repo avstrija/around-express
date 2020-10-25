@@ -8,8 +8,7 @@ function getUsers(req, res) {
     .then((users) => {
       res.status(200).send(users);
     })
-    // eslint-disable-next-line no-console
-    .catch((err) => console.log(err));
+    .catch((err) => res.status(500).send({ message: err.message }));
 }
 
 function getUserById(req, res) {
@@ -23,8 +22,7 @@ function getUserById(req, res) {
 
       return res.status(404).send({ message: 'User ID not found' });
     })
-    // eslint-disable-next-line no-console
-    .catch((err) => console.log(err));
+    .catch((err) => res.status(500).send({ message: err.message }));
 }
 
 module.exports = { getUsers, getUserById };

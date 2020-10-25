@@ -8,8 +8,7 @@ function getCards(req, res) {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    // eslint-disable-next-line no-console
-    .catch((err) => console.log(err));
+    .catch((err) => res.status(500).send({ message: err.message }));
 }
 
 function getCardById(req, res) {
@@ -23,8 +22,7 @@ function getCardById(req, res) {
 
       return res.status(404).send({ message: 'Requested resource not found' });
     })
-    // eslint-disable-next-line no-console
-    .catch((err) => console.log(err));
+    .catch((err) => res.status(500).send({ message: err.message }));
 }
 
 module.exports = { getCards, getCardById };
