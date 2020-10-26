@@ -8,7 +8,7 @@ function getCards(req, res) {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(err.status).send({ message: err.message }));
 }
 
 function getCardById(req, res) {
@@ -22,7 +22,7 @@ function getCardById(req, res) {
 
       return res.status(404).send({ message: 'Requested resource not found' });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(err.status).send({ message: err.message }));
 }
 
 module.exports = { getCards, getCardById };

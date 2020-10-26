@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/avstrija/around-express#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.10.10"
   },
   "devDependencies": {
     "eslint": "^7.2.0",

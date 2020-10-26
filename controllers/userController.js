@@ -8,7 +8,7 @@ function getUsers(req, res) {
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(err.status).send({ message: err.message }));
 }
 
 function getUserById(req, res) {
@@ -22,7 +22,7 @@ function getUserById(req, res) {
 
       return res.status(404).send({ message: 'User ID not found' });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(err.status).send({ message: err.message }));
 }
 
 module.exports = { getUsers, getUserById };
