@@ -1,16 +1,13 @@
 const express = require('express');
 const Card = require('../models/card');
-const { getCards, getCardById } = require('../controllers/cardController');
+const { getCards, createCard, deleteCard, handleLike } = require('../controllers/cardController');
 
 
 const router = express.Router();
 
-router.get('/cards', (req, res) => {
-  getCards(req, res);
-});
-
-router.get('/cards/:id', (req, res) => {
-  getCardById(req, res);
-});
+router.get('/cards', getCards);
+router.post('/cards', createCard);
+router.delete('/cards/:id', deleteCard);
+router.patch('/cards/:id/likes', handleLike);
 
 module.exports = router;

@@ -1,19 +1,13 @@
+/* eslint-disable object-curly-newline */
 const express = require('express');
-const { getUsers, getUserById, createUser } = require('../controllers/userController');
+const { getUsers, getUserById, createUser, updateProfile, updateAvatar } = require('../controllers/userController');
 
 const router = express.Router();
 
-router.get('/users', (req, res) => {
-  getUsers(req, res);
-});
-
-router.get('/users/:id', (req, res) => {
-  getUserById(req, res);
-});
-
-router.post('/users', (req, res) => {
-  createUser(req, res);
-});
-
+router.get('/users', getUsers);
+router.get('/users/:id', getUserById);
+router.post('/users', createUser);
+router.patch('/users/me', updateProfile);
+router.patch('/users/me/avatar', updateAvatar);
 
 module.exports = router;

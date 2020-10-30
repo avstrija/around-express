@@ -1,28 +1,59 @@
-const path = require('path');
-const getFileContent = require('../helpers/getFileContent');
+const Card = require('../models/card');
 
-const pathToData = path.join(__dirname, '..', 'data', 'cards.json');
-
-function getCards(req, res) {
-  return getFileContent(pathToData)
+const getCards = (req, res) => {
+  Card.find({})
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch((err) => res.status(err.status).send({ message: err.message }));
+    .catch((err) => res.status(500).send({ message: err.message }));
+};
+
+const createCard = (req, res) => {
+  const { name, link } = req.body;
+
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => res.status(200).send({ data: card }))
+    .catch((err) => {
+     if (err.name === "ValidationError") {
+       res.status(400).send({ message: err.message });
+     } else {
+       res.status(500).send({ message: err.message });
+     }
+   });
 }
 
-function getCardById(req, res) {
-  return getFileContent(pathToData)
-    .then((cards) => {
-      const currCard = cards.find((card) => card._id === req.params.id);
-
-      if (currCard) {
-        res.status(200).send(currCard);
+const deleteCard = (req, res) => {
+  Card.findByIdAndRemove(req.params.id)
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Requested resource not found' });
       }
-
-      return res.status(404).send({ message: 'Requested resource not found' });
+      res.status(200).send({ data: card });
     })
-    .catch((err) => res.status(err.status).send({ message: err.message }));
-}
+    .catch((err) => res.status(500).send({ message: err.message }));
+};
 
-module.exports = { getCards, getCardById };
+const likedBefore = (req, res) => {
+  Card.findById(req.params.id)
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Requested resource not found' });
+      }
+      return card.likes.includes(req.user._id);
+    })
+    .catch((err) => res.status(500).send({ message: err.message }));
+};
+
+const handleLike = (req, res) => {
+  const method = likedBefore(req, res) ? { $pull: { likes: req.user._id } } : { $addToSet: { likes: req.user._id } };
+
+  Card.findByIdAndUpdate(
+    req.params.id,
+    method,
+    { new: true },
+  )
+  .then((card) => res.status(200).send({ data: card }))
+  .catch((err) => res.status(500).send({ message: err.message }));
+};
+
+module.exports = { getCards, createCard, deleteCard, handleLike };
