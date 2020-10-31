@@ -17,9 +17,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => /https?:\/\/(www\.)?\S*\.\S*#?/.test(v)
-    }
-  }
+      validator: (v) => /https?:\/\/(www\.)?\S*\.\S*#?/.test(v),
+    },
+  },
 });
 
 module.exports = mongoose.model('user', userSchema);

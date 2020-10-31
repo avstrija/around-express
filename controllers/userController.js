@@ -1,3 +1,4 @@
+const { checkIdValidity } = require('../helpers/checkIdValidity');
 const User = require('../models/user');
 
 const getUsers = (req, res) => {
@@ -12,11 +13,14 @@ const getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'User ID not found' });
+        res.status(404).send({ message: 'User ID not found' });
       }
-      return res.status(200).send({data: user});
+      res.status(200).send({ data: user });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      checkIdValidity(req, res);
+      res.status(500).send({ message: err.message });
+    });
 };
 
 const createUser = (req, res) => {
@@ -36,21 +40,29 @@ const createUser = (req, res) => {
 const updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
-    { name: req.body.name, about: req.body.about},
+    { name: req.body.name, about: req.body.about },
     { new: true },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      checkIdValidity(req, res);
+      res.status(500).send({ message: err.message });
+    });
 };
 
 const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
-    { avatar: req.body.avatar},
+    { avatar: req.body.avatar },
     { new: true },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      checkIdValidity(req, res);
+      res.status(500).send({ message: err.message });
+    });
 };
 
-module.exports = { getUsers, getUserById, createUser, updateProfile, updateAvatar };
+module.exports = {
+  getUsers, getUserById, createUser, updateProfile, updateAvatar,
+};
