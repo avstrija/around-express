@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { generateJWT } = require('../helpers/jwt');
-const ValidationError = require('../middleware/errors/ValidationError');
 const NotFoundError = require('../middleware/errors/NotFoundError');
 const ConflictError = require('../middleware/errors/ConflictError');
 
@@ -53,12 +52,7 @@ const createUser = (req, res, next) => {
         return User.create({
           name, about, avatar, email, password: hash,
         })
-          .then((user) => {
-            if (user) {
-              res.status(200).send({ data: user });
-            }
-            throw new ValidationError('Invalid data passed to the server.');
-          });
+          .then((user) => res.status(200).send({ data: user }));
       })
       .catch(next);
   });
