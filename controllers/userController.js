@@ -1,68 +1,104 @@
-const { checkIdValidity } = require('../helpers/checkIdValidity');
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const { generateJWT } = require('../helpers/jwt');
+const ValidationError = require('../middleware/errors/ValidationError');
+const NotFoundError = require('../middleware/errors/NotFoundError');
+const ConflictError = require('../middleware/errors/ConflictError');
 
-const getUsers = (req, res) => {
+const SALT_ROUND = 10;
+
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+// some user
+const getUserById = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'User ID not found' });
+        throw new NotFoundError('User not found.');
       }
       res.status(200).send({ data: user });
     })
-    .catch((err) => {
-      checkIdValidity(req, res);
-      res.status(500).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
-      } else {
-        res.status(500).send({ message: err.message });
+// current user
+const getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('User not found.');
       }
-    });
+      res.send(user);
+    })
+    .catch(next);
 };
 
-const updateProfile = (req, res) => {
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  return bcrypt.hash(password, SALT_ROUND, (err, hash) => {
+    User.findOne({ email })
+      .then((oldUser) => {
+        if (oldUser) {
+          throw new ConflictError('User with this email address already exists');
+        }
+        return User.create({
+          name, about, avatar, email, password: hash,
+        })
+          .then((user) => {
+            if (user) {
+              res.status(200).send({ data: user });
+            }
+            throw new ValidationError('Invalid data passed to the server.');
+          });
+      })
+      .catch(next);
+  });
+};
+
+const updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name: req.body.name, about: req.body.about },
     { new: true },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      checkIdValidity(req, res);
-      res.status(500).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-const updateAvatar = (req, res) => {
+const loginUser = (req, res, next) => {
+  const { password, email } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = generateJWT({ _id: user._id });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
+      return res.status(200).send({ token });
+    })
+    .catch(next);
+};
+
+const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar: req.body.avatar },
     { new: true },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      checkIdValidity(req, res);
-      res.status(500).send({ message: err.message });
-    });
+    .catch(next);
 };
 
 module.exports = {
-  getUsers, getUserById, createUser, updateProfile, updateAvatar,
+  getUsers, getUserById, getUserInfo, createUser, updateProfile, updateAvatar, loginUser,
 };
