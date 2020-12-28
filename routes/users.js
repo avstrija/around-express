@@ -7,13 +7,6 @@ const {
 const router = express.Router();
 
 router.get('/users', getUsers);
-router.get('/users/:id',
-  celebrate({
-    [Segments.PARAMS]: Joi.object({
-      id: Joi.string().required().hex(),
-    }),
-  }),
-  getUserById);
 router.get('/users/me', getUserInfo);
 router.patch('/users/me',
   celebrate({
@@ -29,5 +22,12 @@ router.patch('/users/me/avatar', celebrate({
   }),
 }),
 updateAvatar);
+router.get('/users/:id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      id: Joi.string().required().hex(),
+    }),
+  }),
+  getUserById);
 
 module.exports = router;
