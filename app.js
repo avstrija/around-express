@@ -10,6 +10,12 @@ const auth = require('./middleware/auth');
 const { loginUser, createUser } = require('./controllers/userController');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 const NotFoundError = require('./middleware/errors/NotFoundError');
+const cors = require('cors');
+
+const corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200,
+}
 
 const app = express();
 
@@ -34,7 +40,7 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
 //     throw new Error("Server will crash now");
 //   }, 0);
 // });
-
+app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
