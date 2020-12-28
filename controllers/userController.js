@@ -85,7 +85,7 @@ const loginUser = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
-    req.user._id,
+    req.body._id,
     { avatar: req.body.avatar },
     { new: true },
   )
