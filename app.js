@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -8,6 +9,7 @@ const cardRouter = require('./routes/cards');
 const auth = require('./middleware/auth');
 const { loginUser, createUser } = require('./controllers/userController');
 const { requestLogger, errorLogger } = require('./middleware/logger');
+const NotFoundError = require('./middleware/errors/NotFoundError');
 
 const app = express();
 
@@ -68,8 +70,8 @@ app.post('/signup',
 
 app.use(auth);
 app.use('/', userRouter, cardRouter);
-app.use((req, res) => {
-  res.status(404).send({ message: 'Requested resource not found' });
+app.use('*', (req, res) => {
+  throw new NotFoundError('Requested resource not found');
 });
 
 app.use(errorLogger);

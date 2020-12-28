@@ -1,15 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'somesecretstringformakingjwt';
+const { NODE_ENV, JWT_SECRET } = process.env;
 
-const generateJWT = ({ _id }) => jwt.sign({ _id }, JWT_SECRET, { expiresIn: '7d' });
-
-// const isAuthorized = (token) => jwt.verify(token, JWT_SECRET, (err, decoded) => {
-//   if (err) {
-//     return false;
-//   }
-//   return User.findOne({ _id: decoded.id })
-//     .then((user) => Boolean(user));
-// });
+const generateJWT = ({ _id }) => jwt.sign({ _id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
 
 module.exports = { generateJWT };
