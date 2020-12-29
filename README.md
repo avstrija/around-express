@@ -1,4 +1,7 @@
 # Around the U.S. Front End + Back End
+http://comeoninside.students.nomoreparties.site/
+Front-end repository: 
+https://github.com/avstrija/react-around-auth
 
 ## Directories
 

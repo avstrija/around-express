@@ -34,12 +34,12 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
 // eslint-disable-next-line no-console
   .catch((err) => console.log(`${err}: did not connect`));
 
-// // only for reviewers
-// app.get("/crash-test", () => {
-//   setTimeout(() => {
-//     throw new Error("Server will crash now");
-//   }, 0);
-// });
+// only for reviewers
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
 app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
