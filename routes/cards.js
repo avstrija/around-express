@@ -1,7 +1,7 @@
 const express = require('express');
 const { celebrate, Joi, Segments } = require('celebrate');
 const {
-  getCards, createCard, deleteCard, handleLike,
+  getCards, createCard, deleteCard, addLike, deleteLike
 } = require('../controllers/cardController');
 
 const router = express.Router();
@@ -31,6 +31,12 @@ router.patch('/cards/:id/likes', celebrate({
     id: Joi.string().required().hex(),
   }),
 }),
-handleLike);
+addLike);
+router.delete('/cards/:id/likes', celebrate({
+  [Segments.PARAMS]: Joi.object({
+    id: Joi.string().required().hex(),
+  }),
+}),
+deleteLike);
 
 module.exports = router;

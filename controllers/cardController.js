@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 const NotFoundError = require('../middleware/errors/NotFoundError');
 const ForbiddenError = require('../middleware/errors/ForbiddenError');
-const { likedBefore } = require('../helpers/likedBefore');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -37,13 +36,20 @@ const deleteCard = (req, res, next) => {
     .catch(next);
 };
 
-const handleLike = (req, res, next) => {
-  const method = likedBefore(req, res) ? { $pull: { likes: req.user._id } }
-    : { $addToSet: { likes: req.user._id } };
-
+const addLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
-    method,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => res.status(200).send({ data: card }))
+    .catch(next);
+};
+
+const deleteLike = (req, res, next) => {
+  Card.findByIdAndUpdate(
+    req.params.id,
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => res.status(200).send({ data: card }))
@@ -51,5 +57,5 @@ const handleLike = (req, res, next) => {
 };
 
 module.exports = {
-  getCards, createCard, deleteCard, handleLike,
+  getCards, createCard, deleteCard, addLike, deleteLike,
 };

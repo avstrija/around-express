@@ -4,18 +4,18 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+const cors = require('cors');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const auth = require('./middleware/auth');
 const { loginUser, createUser } = require('./controllers/userController');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 const NotFoundError = require('./middleware/errors/NotFoundError');
-const cors = require('cors');
 
 const corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200,
-}
+};
 
 const app = express();
 
@@ -44,13 +44,6 @@ app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '5f9b2dd2ccf56f19ccc34fc3',
-//   };
-
-//   next();
-// });
 
 app.use(requestLogger);
 

@@ -1,9 +1,10 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { generateJWT } = require('../helpers/jwt');
 const NotFoundError = require('../middleware/errors/NotFoundError');
 const ConflictError = require('../middleware/errors/ConflictError');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
 const SALT_ROUND = 10;
 
 const getUsers = (req, res, next) => {
@@ -73,20 +74,19 @@ const loginUser = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = generateJWT({ _id: user._id });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
       });
-      return res.status(200).send({email, token });
+      return res.status(200).send({ token });
     })
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
-  console.log(req.body)
   User.findByIdAndUpdate(
-    req.body._id,
+    req.user._id,
     { avatar: req.body.avatar },
     { new: true },
   )
