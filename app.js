@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+// const path = require('path');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
@@ -42,6 +43,7 @@ app.get('/crash-test', () => {
 app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(requestLogger);
 
@@ -60,7 +62,7 @@ app.post('/signup',
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
       email: Joi.string().required().email(),
-      password: Joi.string().required(),
+      password: Joi.string().trim().min(1).required(),
     }),
   }),
   createUser);

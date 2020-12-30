@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: (v) => validation.isEmail(v),
       message: 'Please, enter a valid email address',
@@ -37,10 +38,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
-    validate: {
-      validator: (v) => validation.isAlphanumeric(v),
-      message: 'Password should not contain spaces',
-    },
   },
 });
 

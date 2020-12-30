@@ -53,13 +53,14 @@ const createUser = (req, res, next) => {
         return User.create({
           name, about, avatar, email, password: hash,
         })
-          .then((user) => res.status(200).send({
-            name: user.name,
-            about: user.about,
-            avatar: user.avatar,
-            email: user.email,
-            _id: user._id,
-          }));
+          .then((user) => res.status(200).send({ data: user }))
+        //       name: user.name,
+        //       about: user.about,
+        //       avatar: user.avatar,
+        //       email: user.email,
+        //       _id: user._id,
+        //     }));
+        // })
       })
       .catch(next);
   });
