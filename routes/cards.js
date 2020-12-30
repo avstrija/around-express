@@ -28,13 +28,13 @@ router.delete('/cards/:id', celebrate({
 deleteCard);
 router.patch('/cards/:id/likes', celebrate({
   [Segments.PARAMS]: Joi.object({
-    id: Joi.string().required().hex(),
+    id: Joi.string().required().length(24).hex(),
   }),
 }),
 addLike);
 router.delete('/cards/:id/likes', celebrate({
   [Segments.PARAMS]: Joi.object({
-    id: Joi.string().required().hex(),
+    id: Joi.string().required().length(24).hex(),
   }),
 }),
 deleteLike);

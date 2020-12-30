@@ -25,7 +25,7 @@ updateAvatar);
 router.get('/users/:id',
   celebrate({
     [Segments.PARAMS]: Joi.object({
-      id: Joi.string().required().hex(),
+      id: Joi.string().required().length(24).hex(),
     }),
   }),
   getUserById);
