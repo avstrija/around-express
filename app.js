@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
@@ -68,12 +67,14 @@ app.post('/signup',
 
 app.use(auth);
 app.use('/', userRouter, cardRouter);
+// eslint-disable-next-line no-unused-vars
 app.use('*', (req, res) => {
   throw new NotFoundError('Requested resource not found');
 });
 
 app.use(errorLogger);
 app.use(errors());
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // if an error has no status, display 500
   const { statusCode = 500, message } = err;

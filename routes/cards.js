@@ -1,7 +1,7 @@
 const express = require('express');
 const { celebrate, Joi, Segments } = require('celebrate');
 const {
-  getCards, createCard, deleteCard, addLike, deleteLike
+  getCards, createCard, deleteCard, addLike, deleteLike,
 } = require('../controllers/cardController');
 
 const router = express.Router();
