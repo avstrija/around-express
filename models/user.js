@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    validate: {
+      validator: (v) => validation.isAlphanumeric(v),
+      message: 'Password should not contain spaces',
+    },
   },
 });
 
