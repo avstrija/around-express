@@ -11,7 +11,7 @@ router.post('/cards',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
-      link: Joi.string().required().uri(),
+      link: Joi.string().uri({ scheme: /https?:\/\/(www\.)?[^ ~<>]+\.[^ ~<>]+#?/ }),
     }),
   }),
   createCard);
@@ -22,7 +22,7 @@ router.delete('/cards/:id', celebrate({
     })
     .options({ allowUnknown: true }),
   params: Joi.object().keys({
-    id: Joi.string().required().hex(),
+    id: Joi.string().required().length(24).hex(),
   }),
 }),
 deleteCard);

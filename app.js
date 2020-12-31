@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-// const path = require('path');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
@@ -43,14 +42,13 @@ app.get('/crash-test', () => {
 app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(requestLogger);
 
 app.post('/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().email(),
+      email: Joi.string().required().pattern(new RegExp('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$')),
       password: Joi.string().required(),
     }),
   }),
@@ -60,8 +58,8 @@ app.post('/signup',
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
-      email: Joi.string().required().email(),
+      avatar: Joi.string().uri({ scheme: /https?:\/\/(www\.)?[^ ~<>]+\.[^ ~<>]+#?/ }),
+      email: Joi.string().required().pattern(new RegExp('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$')),
       password: Joi.string().trim().min(1).required(),
     }),
   }),
@@ -69,8 +67,7 @@ app.post('/signup',
 
 app.use(auth);
 app.use('/', userRouter, cardRouter);
-// eslint-disable-next-line no-unused-vars
-app.use('*', (req, res) => {
+app.use('*', () => {
   throw new NotFoundError('Requested resource not found');
 });
 
