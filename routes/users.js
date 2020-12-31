@@ -18,7 +18,7 @@ router.patch('/users/me',
   updateProfile);
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().uri({ scheme: /https?:\/\/(www\\.)?[\S^~<>]+\.[\S^~<>]+#?/ }),
+    avatar: Joi.string().uri({ scheme: [/https?:\/\/(www\\.)?[\S^~<>]+\.[\S^~<>]+#?/] }),
   }),
 }),
 updateAvatar);
