@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validation = require('validator');
 const NotFoundError = require('../middleware/errors/NotFoundError');
-const ValidationError = require('../middleware/errors/ValidationError');
+const AuthError = require('../middleware/errors/AuthError');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -53,7 +53,7 @@ userSchema.statics.findUserByCredentials = function (email, password) {
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new ValidationError('Incorrect email or password');
+            throw new AuthError('Incorrect email or password');
           }
           return user;
         });
